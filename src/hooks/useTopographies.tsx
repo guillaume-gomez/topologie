@@ -47,7 +47,6 @@ function mapRange (n: number, start1: number, stop1: number, start2: number, sto
 
 function useTopographies({ grid, width, height, numberOfLayers, fromToColors } : TopographyProps) {
   const [shapes, setShapes] = useState<Shape[]>([]);
-  const [loadDirectFile, setDirectFile] = useState<boolean>(true);
 
   useEffect(() => {
     generate();

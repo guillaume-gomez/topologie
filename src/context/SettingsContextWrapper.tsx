@@ -20,8 +20,8 @@ export interface SettingsContextParams {
   setColorTo: (color: string) => void;
   colorChosen: boolean;
   setColorChosen: (chosen: boolean) => void;
-  hasSingleTopograhy: boolean;
   grid: Grid;
+  hasSingleTopograhy: boolean;
 }
 export const SettingsContext = createContext<SettingsContextParams>(null!);
 
@@ -36,8 +36,8 @@ function SettingsContextWrapper({children}: Props) {
   const [colorTo, setColorTo] = useState<string>("#742906");
   const [animationState, setAnimationState] = useState<GenerationAnimationState>("ended");
   const [colorChosen, setColorChosen] = useState<boolean>(false);
+  const { grid, width, height } = useGrid({filepath: "mario.jpeg", typeOfFile: "image" });
   const [hasSingleTopograhy, ] = useState<boolean>(false);
-  const { grid, width, height } = useGrid({filepath: "bretagne.json", typeOfFile: "real-data" });
 
   return (
     <SettingsContext value={{

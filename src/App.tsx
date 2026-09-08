@@ -27,7 +27,7 @@ function App() {
     setAnimationState,
     colorFrom,
     colorTo,
-    hasSingleTopograhy
+    hasSingleTopograhy,
   } = useContext(SettingsContext);
   const {
     setSceneName,
