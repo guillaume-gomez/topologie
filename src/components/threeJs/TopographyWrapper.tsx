@@ -78,7 +78,7 @@ function TopographyWrapper({ shape, optimized } : TopographyWrapperProps) {
   );
 
 
-	return (
+  return (
     <>
       <TopologyShape
         points={shape.points}

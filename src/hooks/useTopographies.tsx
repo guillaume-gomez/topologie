@@ -1,10 +1,15 @@
 import { useState, useEffect } from "react";
 import { Vector2, Color } from "three";
-import { lerpColors } from "../../colorUtils";
-import { generateGrid } from "../../libs/generateGrid";
+import { lerpColors } from "../colorUtils";
+import { generateGrid } from "../libs/generateGrid";
+import { Grid } from "./useGrid";
+import { getData } from "../readJson";
 import * as d3 from "d3-contour";
 
+const { BASE_URL } = import.meta.env;
+
 interface TopographyProps {
+  grid: Grid;
   width: number;
   height: number;
   numberOfLayers: number;
@@ -16,6 +21,7 @@ export interface Shape {
   points: Vector2[];
   elevation: number;
 }
+
 
 const COLORS_SAMPLE = [
 "#F05D5E",
@@ -39,40 +45,37 @@ function mapRange (n: number, start1: number, stop1: number, start2: number, sto
   return (n - start1) / (stop1 - start1) * (stop2 - start2) + start2;
 }
 
-function useTopographies({ width, height, numberOfLayers, fromToColors } : TopographyProps) {
+function useTopographies({ grid, width, height, numberOfLayers, fromToColors } : TopographyProps) {
   const [shapes, setShapes] = useState<Shape[]>([]);
-  const [frequency, _setFrequency] = useState<number>(0.05);
+  const [loadDirectFile, setDirectFile] = useState<boolean>(true);
 
   useEffect(() => {
     generate();
-  }, [width, height, numberOfLayers]);
+  }, [grid, numberOfLayers]);
 
-  function computeThresholds() : number[] {
-    const step = 1.0 / numberOfLayers;
+  function computeThresholds(min:number, max :number) : number[] {
     const thresholds = [];
-    for(let i = step, j = 0; i <= 1.0; i += step, j++) {
-      thresholds[j] = i;
+    for(let i = 0; i < numberOfLayers; i++) {
+      thresholds.push(i / (numberOfLayers - 1));
     }
-
-    const thresholdsContrained = thresholds.map(threshold => mapRange(threshold, 0.0, 1.0, 0.1, 0.90));
+    const thresholdsContrained = thresholds.map(threshold => mapRange(threshold, 0.0, 1.0, min, max));
     return thresholdsContrained;
   }
 
-  function generate(): Shape[] {
+  async function generate(): Shape[] {
     const shapes : Shape[] = [];
-    const gridWidth = 64;
-    const gridHeight = gridWidth;
-
-    const grid = generateGrid(gridWidth, gridHeight, frequency);
+    const { gridWidth, gridHeight, data, min, max } = grid;
     const contours = d3.contours()
     .size([gridWidth, gridHeight])
-    .thresholds(computeThresholds())
+    .thresholds(computeThresholds(min, max))
     .smooth(true);
 
-    const result = contours(grid.flat());
+    const result = contours(data.flat());
 
-    const scaleX = (width/gridWidth);
-    const scaleY = (height/gridHeight);
+    const [newWidth, newHeight] = [width, height];
+
+    const scaleX = (newWidth/gridWidth);
+    const scaleY = (newHeight/gridHeight);
 
     result.forEach((threshold, thresholdIndex) => {
       threshold.coordinates.forEach(coordinate => {

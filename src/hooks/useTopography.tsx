@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { Vector2, Color } from "three";
 import { createNoise2D } from 'simplex-noise';
-import { lerpColors } from "../../colorUtils";
+import { lerpColors } from "../colorUtils";
 
 interface TopographyProps {
   width: number;
@@ -66,10 +66,10 @@ function useTopography({ width, height, numberOfLayers, fromToColors } : Topogra
           Math.cos(m) * frequency,
           Math.sin(m) * frequency
         );
-      
+
         // Convertir le bruit (-1 à 1) en variation de rayon (0.7 à 1.3)
         const noisyRadius = mapRange(noiseValue, -1, 1, minRadiusRatio, maxRadiusRatio) * radius;
-      
+
         const x = Math.cos(m) * noisyRadius;
         const y = Math.sin(m) * noisyRadius;
         points.push({x, y});
@@ -96,7 +96,7 @@ function useTopography({ width, height, numberOfLayers, fromToColors } : Topogra
   //         Math.sin(m) * frequency
   //       );
   //       const noisyRadius = mapRange(noiseValue, -1, 1, minRadiusRatio, maxRadiusRatio) * radius;
-      
+
   //       const x = Math.cos(m) * noisyRadius;
   //       const y = Math.sin(m) * noisyRadius;
   //       points.push({x, y});
@@ -129,7 +129,7 @@ function useTopography({ width, height, numberOfLayers, fromToColors } : Topogra
       //   100,
       // );
 
-      const shape = { 
+      const shape = {
         color: colorByElevation(elevation),
         points: shapePoints.map(point => new Vector2(point.x, point.y)),
         elevation
